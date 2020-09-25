@@ -218,6 +218,7 @@ private: System::Void button4_Click(System::Object^ sender, System::EventArgs^ e
 
 	Copy->View(listBox1); //Выводим на ЛистБокс
 	A = gcnew My_Stack(Copy); //Обновляем А
+
 }
 	
 private: System::Void button5_Click(System::Object^ sender, System::EventArgs^ e) 
