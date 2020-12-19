@@ -1,6 +1,6 @@
 #pragma once
 #include "Stack.h"
-#include "Word.h"
+using namespace System::IO;
 
 namespace Homework1 {
 
@@ -21,7 +21,8 @@ namespace Homework1 {
 		{
 			InitializeComponent();
 			A = gcnew My_Stack();
-			Word = gcnew word();
+			Word = gcnew String("");
+
 		}
 	private: System::Windows::Forms::Button^ button1;
 	public:
@@ -34,7 +35,10 @@ namespace Homework1 {
 		/// Освободить все используемые ресурсы.
 		/// </summary>
 		My_Stack ^A;
-		word^ Word;
+		String^ Word;
+
+
+		//System::Collections::Generic::Stack <String^>^ St;
 	private: System::Windows::Forms::Button^ button5;
 	protected:
 
@@ -47,6 +51,74 @@ namespace Homework1 {
 			{
 				delete components;
 			}
+		}
+		void View(My_Stack ^ p, System::Windows::Forms::ListBox^ LB) //Показать Стек на Лист Боксе
+		{
+			array <String^>^ ar;
+			ar = gcnew array <String^>(p->Count);
+			ar = p->ToArray();
+			LB->Items->Clear();
+			for (int i = 0; i < p->Count; i++)
+			{
+				LB->Items->Add(ar[i]);
+			}
+		}
+
+		My_Stack^ Del_Main(My_Stack^ A)
+		{
+			array <String^>^ temp = gcnew array <String^>(A->Count);
+			My_Stack^ B = gcnew My_Stack();
+			temp = A->ToArray();
+
+			for (int i = 0; i< A->Count; i++)
+			{
+				if (!(System::Text::RegularExpressions::Regex::IsMatch(temp[i], "[A-Z]") || System::Text::RegularExpressions::Regex::IsMatch(temp[i], "[А-Я]")))
+				B->Push(temp[i]);
+			}
+			return B;
+		}
+
+		My_Stack^ Del_One(My_Stack^ A)
+		{
+			array <String^>^ temp = gcnew array <String^>(A->Count);
+			My_Stack^ B = gcnew My_Stack();
+			temp = A->ToArray();
+			for (int i = 0; i < A->Count; i++)
+			{
+				if (!(temp[i]->Length == 1))
+				{ 
+					B->Push(temp[i]); 
+				}
+
+			}
+			return B;
+		}
+
+		void Take_From(My_Stack^ A, String^ fileName)
+		{
+			StreamReader^ SR = gcnew StreamReader(fileName);
+			String^ str = gcnew String("");
+			while (str = SR->ReadLine()) 
+			{
+				A->Push(str);
+			}
+			SR->Close();
+		}
+
+		void UpdateFile(My_Stack^ A, String^ fileName)
+		{
+			StreamWriter^ SR = gcnew StreamWriter(fileName);
+			String^ str = gcnew String("");
+			array <String^>^ temp = gcnew array <String^>(A->Count);
+			temp = A->ToArray();
+
+			for (int i = 0; i < A->Count; i++)
+			{
+				String^ Line = gcnew String("");
+				Line = temp[i] + "\n";
+				SR->Write(Line);
+			}
+			SR->Close();
 		}
 	private: System::Windows::Forms::ListBox^ listBox1;
 	private: System::Windows::Forms::Label^ label1;
@@ -189,54 +261,37 @@ namespace Homework1 {
 		this->Close();
 	}
 private: System::Void MyForm_Load(System::Object^ sender, System::EventArgs^ e) {
-	A->View(listBox1); 
+	Take_From(A, "StackFile.txt");
+	View(A, listBox1);
 }
 private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) 
 {
 	A->Pop();
-	A->View(listBox1);
+	View(A, listBox1);
+	UpdateFile(A, "StackFile.txt");
 }
 private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e) {
 	if (richTextBox1->Text != "")
 	{
 		A->Push(richTextBox1->Text);
 	}
-	A->View(listBox1);
+	View(A, listBox1);
+	UpdateFile(A, "StackFile.txt");
+
 }
 
 private: System::Void button4_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	My_Stack^ Copy = gcnew My_Stack();
-	while (!(A->Is_Empty()))//Цикл выполняется, пока Стек наполнен
-	{
-		if (!(A->Top()->one_sym())) //Если слово состоит не из одного символа, тогда:
-		{
-			Copy->Push(A->Top()->ToString());//Добавляем в новый стек подходящие элементы
-		}
-		A->Pop();//Удаляем последний элемент
-	}
-
-	Copy->View(listBox1); //Выводим на ЛистБокс
-	A = gcnew My_Stack(Copy); //Обновляем А
-
+{ 
+	A = gcnew My_Stack(Del_One(A));
+	View(A, listBox1);
+	UpdateFile(A, "StackFile.txt");
 }
 	
 private: System::Void button5_Click(System::Object^ sender, System::EventArgs^ e) 
 {
-	My_Stack^ Copy = gcnew My_Stack();
-	while (!(A->Is_Empty()))//Цикл выполняется, пока Стек наполнен
-	{
-		if (!(A->Top()->capital()))//Смотрим последний элемент. Если в слове есть заглавные буквы,тогда:
-		{
-			Copy->Push(A->Top()->ToString());//Добавляем в новый стек подходящие элементы
-		}
-		A->Pop();//Удаляем последний элемент
-	}
-
-	Copy->View(listBox1);//Выводим на ЛистБокс
-	A = gcnew My_Stack(Copy);//Обновляем А
+	A = gcnew My_Stack(Del_Main(A));
+	View(A, listBox1);
+	UpdateFile(A, "StackFile.txt");
 }
-
-
 };
 }

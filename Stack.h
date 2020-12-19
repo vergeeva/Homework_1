@@ -1,24 +1,11 @@
 #pragma once
-#include "Word.h"
-#define MAX_SIZE 10
+#define MAX_SIZE 30
 using namespace System;
 
 ref class My_Stack
 {
-	array <word^>^ A;
+	array <String^>^ A;
 	int top;
-public:
-	My_Stack(void) //Конструктор по умолчанию
-	{
-		top = 0;
-		A = gcnew array <word^>(MAX_SIZE);
-	}
-	My_Stack(My_Stack ^other) //Конструктор копирования
-	{
-		this->top = other->top;
-		A = gcnew array <word^>(MAX_SIZE);
-		this->A = other->A;
-	}
 	bool Is_Empty() //проверка на пустоту
 	{
 		return top == 0;
@@ -28,11 +15,24 @@ public:
 		return top == MAX_SIZE;
 	}
 	// Положить в стек.
+public:
+	My_Stack(void) //Конструктор по умолчанию
+	{
+		top = 0;
+		A = gcnew array <String^>(MAX_SIZE);
+	}
+	My_Stack(My_Stack ^other) //Конструктор копирования
+	{
+		this->top = other->top;
+		A = gcnew array <String^>(MAX_SIZE);
+		this->A = other->A;
+	}
+
 	bool Push(String^ Word) //Добавление элемента в конец Стека
 	{
 		if (!Is_Full())		// Если не заполнено, то добавить.
 		{
-			A[top++] = gcnew word(Word);
+			A[top++] = gcnew String(Word);
 			return true;
 		}
 		else
@@ -41,30 +41,25 @@ public:
 	// Извлечь из стека
 	bool Pop()//Удаление последнего элемента стека
 	{
-		word ^Word;
+		String^ Word;
 		if (!Is_Empty())		// Если не пусто, то извлечь.
 		{
-			Word = gcnew word(A[--top]);
+			Word = gcnew String(A[--top]);
 			return true;
 		}
 		else
 			return false;		// Искусственный прием. 
 	}
 
-	void View(System::Windows::Forms::ListBox^LB) //Показать Стек на Лист Боксе
+	property int Count
 	{
-		LB->Items->Clear();
-		for (int i = 0; i < top; i++)
-		{
-			LB->Items->Add(A[i]->ToString());
+		int get() {
+			return top;
 		}
 	}
 
-	word^ Top() //Показать последний элемент
+	array <String^>^ ToArray()
 	{
-		int temp = top; //Чтобы не вычитать из переменной top
-		return this->A[--temp];
+		return A;
 	}
-
-
 };
