@@ -38,28 +38,17 @@ public:
 		else
 			return false;
 	}
-	// Извлечь из стека
-	bool Pop()//Удаление последнего элемента стека
+
+	String^ Pop()//Удаление последнего элемента стека
 	{
 		String^ Word;
-		if (!Is_Empty())		// Если не пусто, то извлечь.
+		if (!Is_Empty())		
 		{
 			Word = gcnew String(A[--top]);
-			return true;
+			return Word;
 		}
 		else
-			return false;		// Искусственный прием. 
+			return "0";		
 	}
 
-	property int Count
-	{
-		int get() {
-			return top;
-		}
-	}
-
-	array <String^>^ ToArray()
-	{
-		return A;
-	}
 };
